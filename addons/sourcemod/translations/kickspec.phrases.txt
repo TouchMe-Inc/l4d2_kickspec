@@ -1,0 +1,23 @@
+"Phrases"
+{
+	"TAG"
+	{
+		"en"			"<{green}Kick Spec{default}> "
+	}
+
+	"VOTE_COULDOWN"
+	{
+		"#format"		"{1:d}"
+		"en"			"A vote cannot be called at this moment, try again in a {1} second"
+	}
+
+	"VOTE_TITLE"
+	{
+		"en"			"Kick all spectators from the game?"
+	}
+
+	"KICK_REASON"
+	{
+		"en"			"You were removed from the game via voting"
+	}
+}
