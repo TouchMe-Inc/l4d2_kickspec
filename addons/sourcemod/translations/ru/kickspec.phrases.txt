@@ -1,0 +1,39 @@
+"Phrases"
+{
+    "TAG"
+    {
+        "ru"			"<{green}Kick Spec{default}> "
+    }
+
+    "MENU_KICK_TITLE"
+    {
+        "ru"            "Кого кикаем?\n "
+    }
+
+    "MENU_KICK_ALL_SPEC_ITEM"
+    {
+        "ru"            "Кикнуть всех зрителей\n "
+    }
+
+    "VOTE_COULDOWN"
+    {
+        "#format"       "{1:d}"
+        "ru"            "Голосование сейчас невозможно, попробуйте снова через {1} сек."
+    }
+
+    "VOTE_KICK_ALL_SPEC_TITLE"
+    {
+        "ru"            "Кикнуть всех зрителей?"
+    }
+
+    "VOTE_TARGET_SPEC_TITLE"
+    {
+        "#format"       "{1:s}"
+        "ru"            "Кикнуть {1} из зрителей?"
+    }
+
+    "KICK_REASON"
+    {
+        "ru"            "Вы были удалены из игры по результатам голосования"
+    }
+}

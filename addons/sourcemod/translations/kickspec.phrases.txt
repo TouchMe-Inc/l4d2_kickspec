@@ -1,0 +1,39 @@
+"Phrases"
+{
+    "TAG"
+    {
+        "en"			"<{green}Kick Spec{default}> "
+    }
+
+    "MENU_KICK_TITLE"
+    {
+        "en"			"Who are we kicking?\n "
+    }
+
+    "MENU_KICK_ALL_SPEC_ITEM"
+    {
+        "en"			"Kick all spectators\n "
+    }
+
+    "VOTE_COULDOWN"
+    {
+        "#format"		"{1:d}"
+        "en"			"A vote cannot be called at this moment, try again in a {1} second"
+    }
+
+    "VOTE_KICK_ALL_SPEC_TITLE"
+    {
+        "en"			"Kick all spectators?"
+    }
+
+    "VOTE_TARGET_SPEC_TITLE"
+    {
+        "#format"		"{1:s}"
+        "en"			"Kick {1} from spectators?"
+    }
+
+    "KICK_REASON"
+    {
+        "en"			"You were removed from the game via voting"
+    }
+}
