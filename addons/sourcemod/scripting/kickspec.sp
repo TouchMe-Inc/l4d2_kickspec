@@ -1,68 +1,32 @@
 #pragma semicolon               1
 #pragma newdecls                required
 
+#include <sourcemod>
 #include <colors>
 #include <nativevotes_rework>
 
-#undef REQUIRE_PLUGIN
-#include <readyup>
-#define REQUIRE_PLUGIN
 
-
-public Plugin myinfo = {
+public Plugin myinfo =
+{
 	name = "KickSpec",
 	author = "TouchMe",
 	description = "Vote to kick all spectators from the server",
-	version = "build0001",
+	version = "build0002",
 	url = "https://github.com/TouchMe-Inc/l4d2_kickspec"
 }
 
-
-// Libs
-#define LIB_READY               "readyup"
 
 #define VOTE_TIME               15
 
 #define TRANSLATIONS            "kickspec.phrases"
 
+/*
+ * Team.
+ */
 #define TEAM_SPECTATOR          1
 #define TEAM_SURVIVOR           2
 #define TEAM_INFECTED           3
 
-
-bool g_bReadyUpAvailable = false;
-
-
-/**
-  * Global event. Called when all plugins loaded.
-  */
-public void OnAllPluginsLoaded() {
-	g_bReadyUpAvailable = LibraryExists(LIB_READY);
-}
-
-/**
-  * Global event. Called when a library is removed.
-  *
-  * @param sName     Library name
-  */
-public void OnLibraryRemoved(const char[] sName)
-{
-	if (StrEqual(sName, LIB_READY)) {
-		g_bReadyUpAvailable = false;
-	}
-}
-
-/**
-  * Global event. Called when a library is added.
-  *
-  * @param sName     Library name
-  */
-public void OnLibraryAdded(const char[] sName)
-{
-	if (StrEqual(sName, LIB_READY)) {
-		g_bReadyUpAvailable = true;
-	}
-}
 
 public void OnPluginStart()
 {
@@ -119,13 +83,6 @@ Action HandlerVote(NativeVote hVote, VoteAction tAction, int iParam1, int iParam
 {
 	switch (tAction)
 	{
-		case VoteAction_Start:
-		{
-			if (g_bReadyUpAvailable) {
-				ToggleReadyPanel(false);
-			}
-		}
-
 		case VoteAction_Display:
 		{
 			char sVoteDisplayMessage[128];
@@ -137,9 +94,7 @@ Action HandlerVote(NativeVote hVote, VoteAction tAction, int iParam1, int iParam
 			return Plugin_Changed;
 		}
 
-		case VoteAction_Cancel: {
-			hVote.DisplayFail();
-		}
+		case VoteAction_Cancel: hVote.DisplayFail();
 
 		case VoteAction_Finish:
 		{
@@ -152,8 +107,10 @@ Action HandlerVote(NativeVote hVote, VoteAction tAction, int iParam1, int iParam
 
 			for (int iPlayer = 1; iPlayer <= MaxClients; iPlayer ++)
 			{
-				if (!IsClientInGame(iPlayer) || IsFakeClient(iPlayer)
-				|| GetClientTeam(iPlayer) != TEAM_SPECTATOR  || IsClientAdmin(iPlayer)) {
+				if (!IsClientInGame(iPlayer)
+				|| IsFakeClient(iPlayer)
+				|| !IsClientSpectator(iPlayer)
+				|| IsClientAdmin(iPlayer)) {
 					continue;
 				}
 
@@ -163,18 +120,16 @@ Action HandlerVote(NativeVote hVote, VoteAction tAction, int iParam1, int iParam
 			hVote.DisplayPass();
 		}
 
-		case VoteAction_End:
-		{
-			if (g_bReadyUpAvailable) {
-				ToggleReadyPanel(true);
-			}
-
-			hVote.Close();
-		}
+		case VoteAction_End: hVote.Close();
 	}
 
 	return Plugin_Continue;
 }
+
+bool IsClientSpectator(int iClient) {
+	return GetClientTeam(iClient) == TEAM_SPECTATOR;
+}
+
 
 bool IsClientAdmin(int iClient) {
 	return GetUserAdmin(iClient) != INVALID_ADMIN_ID;
