@@ -183,7 +183,7 @@ Action HandlerVoteKick(NativeVote nv, VoteAction action, int iParam1, int iParam
             } else {
                 char szPlayerName[MAX_NAME_LENGTH];
                 GetClientNameFixed(iParam1, szPlayerName, sizeof szPlayerName, MAX_SHORT_NAME_LENGTH);
-                FormatEx(szVoteDisplay, sizeof szVoteDisplay, "%T", "VOTE_TARGET_SPEC_TITLE", iParam1);
+                FormatEx(szVoteDisplay, sizeof szVoteDisplay, "%T", "VOTE_TARGET_SPEC_TITLE", iParam1, szPlayerName);
             }
 
             nv.SetDetails(szVoteDisplay);
