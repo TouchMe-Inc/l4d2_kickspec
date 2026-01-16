@@ -182,7 +182,7 @@ Action HandlerVoteKick(NativeVote nv, VoteAction action, int iParam1, int iParam
                 FormatEx(szVoteDisplay, sizeof szVoteDisplay, "%T", "VOTE_KICK_ALL_SPEC_TITLE", iParam1);
             } else {
                 char szPlayerName[MAX_NAME_LENGTH];
-                GetClientNameFixed(iParam1, szPlayerName, sizeof szPlayerName, MAX_SHORT_NAME_LENGTH);
+                GetClientNameFixed(g_iTarget, szPlayerName, sizeof szPlayerName, MAX_SHORT_NAME_LENGTH);
                 FormatEx(szVoteDisplay, sizeof szVoteDisplay, "%T", "VOTE_TARGET_SPEC_TITLE", iParam1, szPlayerName);
             }
 
