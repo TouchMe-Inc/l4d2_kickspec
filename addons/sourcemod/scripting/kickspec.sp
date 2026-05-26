@@ -204,6 +204,8 @@ Action HandlerVoteKick(NativeVote nv, VoteAction action, int iParam1, int iParam
 
             nv.DisplayPass();
 
+            char szAuthId[MAX_AUTHID_LENGTH], szReason[128];
+
             if (g_iTarget == -1)
             {
                 for (int iPlayer = 1; iPlayer <= MaxClients; iPlayer ++)
@@ -215,13 +217,21 @@ Action HandlerVoteKick(NativeVote nv, VoteAction action, int iParam1, int iParam
                         continue;
                     }
 
+                    FormatEx(szReason, sizeof szReason, "%T", "KICK_REASON", iPlayer);
+                    GetClientAuthId(g_iTarget, AuthId_Steam2, szAuthId, sizeof(szAuthId), false);
+
                     KickClient(iPlayer, "%T", "KICK_REASON", iPlayer);
+                    BanIdentity(szAuthId, 1, BANFLAG_AUTHID, szReason);
                 }
             }
 
             else if (IsClientConnected(g_iTarget))
-            {
-                KickClient(g_iTarget, "%T", "KICK_REASON", g_iTarget);
+            {          
+                FormatEx(szReason, sizeof szReason, "%T", "KICK_REASON", g_iTarget);
+                GetClientAuthId(g_iTarget, AuthId_Steam2, szAuthId, sizeof(szAuthId), false);
+
+                KickClient(g_iTarget, szReason);
+                BanIdentity(szAuthId, 1, BANFLAG_AUTHID, szReason);
             }
         }
 
