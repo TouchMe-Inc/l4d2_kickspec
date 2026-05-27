@@ -218,7 +218,7 @@ Action HandlerVoteKick(NativeVote nv, VoteAction action, int iParam1, int iParam
                     }
 
                     FormatEx(szReason, sizeof szReason, "%T", "KICK_REASON", iPlayer);
-                    GetClientAuthId(g_iTarget, AuthId_Steam2, szAuthId, sizeof(szAuthId), false);
+                    GetClientAuthId(iPlayer, AuthId_Steam2, szAuthId, sizeof(szAuthId), false);
 
                     KickClient(iPlayer, "%T", "KICK_REASON", iPlayer);
                     BanIdentity(szAuthId, 1, BANFLAG_AUTHID, szReason);
