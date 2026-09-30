@@ -7,7 +7,7 @@
 
     "MENU_KICK_TITLE"
     {
-        "en"			"Who are we kicking?\n "
+        "en"			"Who are we kicking?"
     }
 
     "MENU_KICK_ALL_SPEC_ITEM"

@@ -10,16 +10,16 @@ public Plugin myinfo = {
     name        = "KickSpec",
     author      = "TouchMe",
     description = "Vote to kick all spectators from the server",
-    version     = "build0002",
+    version     = "build0003",
     url         = "https://github.com/TouchMe-Inc/l4d2_kickspec"
 }
 
 
-#define VOTE_TIME               15
+#define VOTE_TIME               10
 
 #define TRANSLATIONS            "kickspec.phrases"
 
-#define MAX_SHORT_NAME_LENGTH   18
+#define MAX_SHORT_NAME_LENGTH   20
 
 /*
  * Team.
@@ -36,10 +36,15 @@ public void OnPluginStart()
 {
     LoadTranslations(TRANSLATIONS);
 
-    RegConsoleCmd("sm_ks", Cmd_KickSpec, "Vote to kick all spectators from the server");
-    RegConsoleCmd("sm_kickspec", Cmd_KickSpec, "Vote to kick all spectators from the server");
-    RegConsoleCmd("sm_sk", Cmd_KickSpec, "Vote to kick all spectators from the server");
-    RegConsoleCmd("sm_speckick", Cmd_KickSpec, "Vote to kick all spectators from the server");
+    char szCmds[][] = {
+        "sm_ks",
+        "sm_kickspec",
+        "sm_sk",
+        "sm_speckick"
+    };
+
+    for (int i = 0; i < sizeof(szCmds); i++)
+        RegConsoleCmd(szCmds[i], Cmd_KickSpec, "Vote to kick all spectators from the server");
 }
 
 Action Cmd_KickSpec(int iClient, int args)
@@ -176,17 +181,13 @@ Action HandlerVoteKick(NativeVote nv, VoteAction action, int iParam1, int iParam
     {
         case VoteAction_Display:
         {
-            char szVoteDisplay[128];
-
             if (g_iTarget == -1) {
-                FormatEx(szVoteDisplay, sizeof szVoteDisplay, "%T", "VOTE_KICK_ALL_SPEC_TITLE", iParam1);
+                nv.SetDetails("%T", "VOTE_KICK_ALL_SPEC_TITLE", iParam1);
             } else {
                 char szPlayerName[MAX_NAME_LENGTH];
                 GetClientNameFixed(g_iTarget, szPlayerName, sizeof szPlayerName, MAX_SHORT_NAME_LENGTH);
-                FormatEx(szVoteDisplay, sizeof szVoteDisplay, "%T", "VOTE_TARGET_SPEC_TITLE", iParam1, szPlayerName);
+                nv.SetDetails("%T", "VOTE_TARGET_SPEC_TITLE", iParam1, szPlayerName);
             }
-
-            nv.SetDetails(szVoteDisplay);
 
             return Plugin_Changed;
         }
@@ -204,8 +205,6 @@ Action HandlerVoteKick(NativeVote nv, VoteAction action, int iParam1, int iParam
 
             nv.DisplayPass();
 
-            char szAuthId[MAX_AUTHID_LENGTH], szReason[128];
-
             if (g_iTarget == -1)
             {
                 for (int iPlayer = 1; iPlayer <= MaxClients; iPlayer ++)
@@ -217,21 +216,12 @@ Action HandlerVoteKick(NativeVote nv, VoteAction action, int iParam1, int iParam
                         continue;
                     }
 
-                    FormatEx(szReason, sizeof szReason, "%T", "KICK_REASON", iPlayer);
-                    GetClientAuthId(iPlayer, AuthId_Steam2, szAuthId, sizeof(szAuthId), false);
-
-                    KickClient(iPlayer, "%T", "KICK_REASON", iPlayer);
-                    BanIdentity(szAuthId, 1, BANFLAG_AUTHID, szReason);
+                    Kick(iPlayer);
                 }
             }
 
-            else if (IsClientConnected(g_iTarget))
-            {          
-                FormatEx(szReason, sizeof szReason, "%T", "KICK_REASON", g_iTarget);
-                GetClientAuthId(g_iTarget, AuthId_Steam2, szAuthId, sizeof(szAuthId), false);
-
-                KickClient(g_iTarget, szReason);
-                BanIdentity(szAuthId, 1, BANFLAG_AUTHID, szReason);
+            else if (IsClientConnected(g_iTarget) && IsClientSpectator(g_iTarget)) {
+                Kick(g_iTarget);
             }
         }
 
@@ -239,6 +229,31 @@ Action HandlerVoteKick(NativeVote nv, VoteAction action, int iParam1, int iParam
     }
 
     return Plugin_Continue;
+}
+
+void Kick(int iClient)
+{
+    char szReason[128];
+    FormatEx(szReason, sizeof szReason, "%T", "KICK_REASON", iClient);
+
+    char szAuthId[MAX_AUTHID_LENGTH];
+    if (GetClientAuthId(iClient, AuthId_Engine, szAuthId, sizeof szAuthId)
+        && BanIdentity(szAuthId, 1, BANFLAG_AUTHID, szReason))
+    {
+        KickClient(iClient, "%s", szReason);
+    }
+    else
+    {
+        // Kick before addip, as BanClient does, so the client sees our message.
+        KickClientEx(iClient, "%s", szReason);
+
+        char szClientIp[32];
+        GetClientIP(iClient, szClientIp, sizeof szClientIp);
+
+        if (szClientIp[0] != '\0') {
+            BanIdentity(szClientIp, 1, BANFLAG_IP, szReason);
+        }
+    }
 }
 
 bool IsClientSpectator(int iClient) {

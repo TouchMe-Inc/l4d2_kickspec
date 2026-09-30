@@ -7,7 +7,7 @@
 
     "MENU_KICK_TITLE"
     {
-        "ru"            "Кого кикаем?\n "
+        "ru"            "Кого кикаем?"
     }
 
     "MENU_KICK_ALL_SPEC_ITEM"
